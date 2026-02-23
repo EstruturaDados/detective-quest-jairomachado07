@@ -5,6 +5,18 @@
 // Este código inicial serve como base para o desenvolvimento das estruturas de navegação, pistas e suspeitos.
 // Use as instruções de cada região para desenvolver o sistema completo com árvore binária, árvore de busca e tabela hash.
 
+    //criando a estrutura da sala
+typedef struct Sala{
+    char nome[50];
+    struct Sala* esquerda;
+    struct Sala* direita;
+} Sala;
+
+    //Protótipos das funções para manipulação das salas
+Sala* criarSala(char *nome);
+void conectarSalas(Sala *origem, Sala *esq, Sala *dir);
+void explorarSalas(Sala *atual);    
+
 int main() {
 
     // 🌱 Nível Novato: Mapa da Mansão com Árvore Binária
@@ -17,6 +29,28 @@ int main() {
     // - Exiba o nome da sala a cada movimento.
     // - Use recursão ou laços para caminhar pela árvore.
     // - Nenhuma inserção dinâmica é necessária neste nível.
+
+        // 1. Criando as salas
+    Sala *hall = criarSala("Hall de Entrada");
+    Sala *biblio = criarSala("Biblioteca");
+    Sala *cozinha = criarSala("Cozinha");
+    Sala *sotao = criarSala("Sotao");
+    Sala *jardim = criarSala("Jardim Secreto");
+    Sala *dispensa = criarSala("Dispensa");
+    Sala *porao = criarSala("Porao Escuro");
+        // 2. Montando a estrutura da árvore (Mapa)
+        // Hall -> Esq: Biblioteca | Dir: Cozinha
+    conectarSalas(hall, biblio, cozinha);
+        // Biblioteca -> Esq: Sotao | Dir: Jardim
+    conectarSalas(biblio, sotao, jardim);
+        // Cozinha -> Esq: Dispensa | Dir: Porao
+    conectarSalas(cozinha, dispensa, porao);
+        // 3. Iniciar o jogo
+    printf("Bem-vindo ao Simulador de Exploracao!\n");
+    explorarSalas(hall);
+        // Limpeza simples (Opcional para este exemplo pequeno)
+    free(hall); free(biblio); free(cozinha); 
+    free(sotao); free(jardim); free(dispensa); free(porao);
 
     // 🔍 Nível Aventureiro: Armazenamento de Pistas com Árvore de Busca
     //
@@ -44,4 +78,51 @@ int main() {
 
     return 0;
 }
+
+    // Função para criar uma nova sala na memória
+Sala* criarSala(char *nome) {
+    Sala *novaSala = (Sala*)malloc(sizeof(Sala));
+    if (novaSala) {
+        strcpy(novaSala->nome, nome);
+        novaSala->esquerda = NULL;
+        novaSala->direita = NULL;
+    }
+    return novaSala;
+}
+    // Função para conectar as salas (definindo os caminhos)
+void conectarSalas(Sala *origem, Sala *esq, Sala *dir) {
+    if (origem) {
+        origem->esquerda = esq;
+        origem->direita = dir;
+    }
+}
+    // Função principal de navegação pelas salas da mansão
+void explorarSalas(Sala *atual) {
+    char escolha;
+
+    while (atual != NULL) {
+        printf("\n---------------------------------");
+        printf("\nVoce esta agora no(a): **%s**", atual->nome);
+        printf("\nCaminhos disponiveis:");
+        
+        if (atual->esquerda) printf("\n[e] Ir para a esquerda: %s", atual->esquerda->nome);
+        if (atual->direita)  printf("\n[d] Ir para a direita: %s", atual->direita->nome);
+        printf("\n[s] Sair da exploracao");
+        printf("\nEscolha: ");
+        
+        scanf(" %c", &escolha); // Espaço antes de %c limpa o buffer do teclado
+
+        if (escolha == 's') {
+            printf("Saindo da mansão... Ate a proxima!\n");
+            break;
+        } else if (escolha == 'e' && atual->esquerda) {
+            atual = atual->esquerda;
+        } else if (escolha == 'd' && atual->direita) {
+            atual = atual->direita;
+        } else {
+            printf("\n[!] Caminho invalido ou sem saida!");
+        }
+    }
+}
+
 
